@@ -1,0 +1,6 @@
+<%= render_if "#{controller_path}/form" do %>
+  <%= simple_form_for [:admin, *parent_models, current] do |f| %>
+    <%= render_if partial: "#{controller_path}/form/fields" %>
+    <%= f.button :submit %>
+  <% end %>
+<% end %>

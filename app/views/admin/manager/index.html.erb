@@ -1,0 +1,30 @@
+<%= link_btn 'New', {action: :new, controller: controller_path}, type: 'primary' %>
+
+<div class="table-responsive">
+  <%= render_if(partial: "#{controller_path}/table/table") do %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <%= render_if(partial: "#{controller_path}/table/headers") %>
+          <th></th>
+        </tr>
+      </thead>
+      <%= render_if(partial: "#{controller_path}/table/tbody") do %>
+        <tbody>
+          <% @list.each do |it| %>
+            <%= render_if(partial: "#{controller_path}/table/tr", locals: {it: it}) do %>
+              <tr>
+                <%= render_if(partial: "#{controller_path}/table/columns", locals: {it: it}) %>
+                <td>
+                  <%= render_if(partial: "#{controller_path}/table/operations", locals: {it: it}) do %>
+                    <%= link_operations(it) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  <% end %>
+</div>

@@ -1,0 +1,77 @@
+class TestsController < ApplicationController
+  def controller_must_reload
+    @test_reload = false
+    test_reload
+    render json: {reload: @test_reload}
+  end
+
+  def test_reload
+    @test_reload_prop ||=
+      begin
+        @test_reload = true
+      end
+  end
+
+
+  TEST_EMAIL = '<%= @email %>'
+  def test_email
+    ApplicationMailer.send_email(to: TEST_EMAIL, subject: 'test_email run success').deliver_now!
+    render json: {msg: 'check email'}
+  end
+
+  def email_job
+    ApplicationMailer.send_email(to: TEST_EMAIL, subject: 'send_email run success').deliver_later
+    TestEmailJob.perform_later
+    TestEmailLaterJob.perform_later
+    render json: {msg: 'check email'}
+  end
+
+  class TestEmailJob < ApplicationJob
+    def perform
+      ApplicationMailer.send_email(to: TEST_EMAIL, subject: 'TestEmailJob run success').deliver_now
+    end
+  end
+
+  class TestEmailLaterJob < ApplicationJob
+    def perform
+      ApplicationMailer.send_email(to: TEST_EMAIL, subject: 'TestEmailLaterJob run success').deliver_later
+    end
+  end
+
+
+  def delay_job
+    TestDelayJob.set(wait: 1.minutes).perform_later(Time.now.to_s)
+    render json: {msg: 'delay job'}
+  end
+
+  class TestDelayJob < ApplicationJob
+    def perform(started_at)
+      ApplicationMailer.send_email(to: TEST_EMAIL, subject: "TestDelayJob run success (started at #{started_at}, sended at #{Time.now})").deliver_later
+    end
+  end
+
+
+  def exception_email
+    call_not_defined_method
+    render json: {msg: 'check email'}
+  end
+
+
+  def exception_email_job
+    ExceptionMailWorker.perform_async
+    render json: {msg: 'check email'}
+  end
+
+  class ExceptionMailWorker
+    include Sidekiq::Worker
+    sidekiq_options :retry => false
+
+    def perform
+      call_not_defined_method
+    end
+  end
+
+  def actioncable
+    render layout: false
+  end
+end

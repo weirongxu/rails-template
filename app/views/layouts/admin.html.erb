@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>System</title>
+    <%= render 'common/admin/header' %>
+  </head>
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+      <header class="main-header">
+        <!-- Logo -->
+        <a href="<%= admin_root_path %>" class="logo">
+          <span class="logo-mini">Admin</span>
+          <span class="logo-lg">Administrator</span>
+        </a>
+        <nav class="navbar navbar-static-top">
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <li>
+                <a id="logout" href="<%= destroy_adminer_session_path %>" data-method="delete">Log out</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <aside class="main-sidebar">
+        <section class="sidebar">
+          <ul class="sidebar-menu">
+            <li class="header">Menu</li>
+            <li><a href="<%= admin_projects_path %>">Projects</a></li>
+            <li><a href="<%= admin_devices_path %>">Devices</a></li>
+          </ul>
+        </section>
+      </aside>
+      <div class="content-wrapper">
+        <section class="content-header">
+          <h1>
+            <%= breadcrumbs.last.name %>
+          </h1>
+          <ol class="breadcrumb">
+            <%= render_breadcrumbs :tag => :li, :separator => "" %>
+          </ol>
+        </section>
+        <%= render 'common/admin/header_errors' %>
+        <section class="content">
+          <div class="box box-primary">
+            <div class="box-body">
+              <%= yield %>
+            </div>
+          </div>
+        </section>
+      </div>
+      <footer class="main-footer">
+        <strong>Copyright &copy; 2017-2027.</strong> All rights reserved.
+      </footer>
+    </div>
+  </body>
+</html>
