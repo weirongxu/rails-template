@@ -35,9 +35,9 @@ def apply_template!
   apply "templates/omniauth.rb" # after devise
   apply "templates/capistrano.rb"
   apply "templates/app.rb"
+  apply "templates/config.rb"
 
   # directory
-  directory "config"
   directory "db"
   directory "lib"
   directory "spec"
