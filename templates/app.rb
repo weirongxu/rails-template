@@ -17,7 +17,6 @@ inject_into_class(
   "ApplicationController",
 ) do
   <<-EOF
-  protect_from_forgery with: :exception
   include HaltCtrl, PowerCtrl
   EOF
 end
