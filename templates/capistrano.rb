@@ -1,10 +1,12 @@
 run('cap install')
 generate("capistrano:nginx_puma:config")
 @node_version =
-  if yes? 'use system node version? (y/N)'
+  begin
     which_node = %x{which node}
     if not which_node.nil? and not which_node.empty?
-      %x{node -v}.match(/(v\d+\.\d+\.\d+)/)[1]
+      if yes? 'use system node version? (y/N)'
+        %x{node -v}.match(/(v\d+\.\d+\.\d+)/)[1]
+      end
     end
   end || '8.11.1'
 
