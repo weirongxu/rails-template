@@ -15,7 +15,6 @@ group :development do
   gem 'meta_request'
 
   # 模型自动注释comment
-  # rails g annotate:install
   gem 'annotate'
 
   # 增强rails console
@@ -28,8 +27,6 @@ group :development do
   gem 'brakeman', require: false
 
   # 自动部署
-  # cap install
-  # rails g capistrano:nginx_puma:config
   gem 'capistrano'
   gem 'capistrano-rvm', require: false
   gem 'capistrano-rails', require: false
@@ -38,7 +35,6 @@ group :development do
 end
 
 group :development, :test do
-  # rails generate rspec:install
   gem 'rspec-rails', '~> 3.6'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
@@ -82,7 +78,6 @@ gem 'mini_magick'
 gem 'sidekiq'
 
 # html模板
-# rails generate simple_form:install
 gem 'simple_form'
 gem 'cocoon'
 
@@ -91,7 +86,6 @@ gem 'sprockets'
 gem 'sprockets-es6'
 
 # 拒绝 IE 6/7/8
-# rails g browser_warrior:install
 gem 'browser_warrior'
 
 # 富文本编辑器
