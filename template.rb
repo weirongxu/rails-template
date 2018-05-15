@@ -13,7 +13,7 @@ def startup_template!
   @devise = yes? "use devise? (y/N)", :blue
   @omniauth = yes? "use omniauth? (y/N)", :blue
 
-  template "Gemfile.tt"
+  apply "templates/gemfile.rb"
   template ".ruby-version.tt"
   template ".ruby-gemset.tt"
 
