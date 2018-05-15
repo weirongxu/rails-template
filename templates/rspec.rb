@@ -21,8 +21,5 @@ insert_before_end(
   # config.include APISupport, type: :request, file_path: %r{spec/api}
   # config.include ControllerSupport, type: :controller, file_path: %r{spec/controller}
   config.include FactoryBot::Syntax::Methods
-  config.before(:suite) do
-    FactoryBot.find_definitions
-  end
   EOF
 end
