@@ -1,4 +1,4 @@
-append_to_file 'config/environments' do
+append_to_file 'Gemfile' do
   <<-EOF
 
 
@@ -39,9 +39,6 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
 end
-
-# postgres
-gem 'pg'
 
 # 系统错误邮箱提醒
 gem 'exception_notification'
