@@ -40,7 +40,6 @@ def apply_template!
   # directory
   directory "db"
   directory "lib"
-  directory "spec"
 
   # env
   template ".env-example.tt"

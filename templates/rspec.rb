@@ -1,3 +1,4 @@
+directory "spec"
 run("bundle exec guard init spec")
 generate("rspec:install")
 insert_into_file(
@@ -16,9 +17,12 @@ insert_before_end(
   <<-EOF
   config.render_views
 
-  config.include Devise::Test::ControllerHelpers, type: :controller
-  config.include APISupport, type: :request, file_path: %r{spec/api}
-  config.include ControllerSupport, type: :controller, file_path: %r{spec/controller}
+  #{@devise ? '' : '# '}config.include Devise::Test::ControllerHelpers, type: :controller
+  # config.include APISupport, type: :request, file_path: %r{spec/api}
+  # config.include ControllerSupport, type: :controller, file_path: %r{spec/controller}
   config.include FactoryBot::Syntax::Methods
+  config.before(:suite) do
+    FactoryBot.find_definitions
+  end
   EOF
 end
