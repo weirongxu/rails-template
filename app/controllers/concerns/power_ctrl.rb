@@ -40,8 +40,12 @@ module PowerCtrl
       @redirect_back_default || root_path
     end
 
+    def request_json
+      @request_json ||= JSON.parse(request.body.read)
+    end
+
     def params_json
-      @params_json ||= JSON.parse(request.body.read)
+      ActionController::Parameters.new(request_json)
     end
 
     def params_get
