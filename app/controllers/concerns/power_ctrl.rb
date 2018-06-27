@@ -40,20 +40,30 @@ module PowerCtrl
       @redirect_back_default || root_path
     end
 
+    def paramsify(data)
+      if data.is_a?(Array)
+        data.map do |it|
+          ActionController::Parameters.new(it)
+        end
+      else
+        ActionController::Parameters.new(data)
+      end
+    end
+
     def request_json
       @request_json ||= JSON.parse(request.body.read)
     end
 
     def params_json
-      ActionController::Parameters.new(request_json)
+      paramsify(request_json)
     end
 
     def params_get
-      ActionController::Parameters.new(request.GET)
+      paramsify(request.GET)
     end
 
     def params_post
-      ActionController::Parameters.new(request.POST)
+      paramsify(request.POST)
     end
 
     helper_method :render_if
