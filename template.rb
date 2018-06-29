@@ -44,7 +44,7 @@ def apply_template!
   # env
   template ".env-example.tt"
   rails_command "init:env"
-  append_to_file('config/deploy/production.rb', '/.env')
+  append_to_file('.gitignore', '/.env')
 
   apply "templates/create-db.rb" if yes? "create database #{@database_name}? (y/N)", :red
 end
