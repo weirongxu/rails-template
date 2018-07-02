@@ -26,7 +26,7 @@ def apply_template!
   copy_file "Capfile"
 
   generate("annotate:install")
-  generate("simple_form:install")
+  generate("simple_form:install --bootstrap")
   generate("browser_warrior:install")
 
   apply "templates/guard.rb"
