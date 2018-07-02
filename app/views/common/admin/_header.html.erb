@@ -41,13 +41,5 @@ end
 <!-- vue -->
 <%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/vue/2.5.11/vue.js') %>
 
-<!-- lodash -->
-<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js') %>
-
-<!-- openlayers -->
-<%= cdn_css('//cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.4/ol.css') %>
-<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.4/ol.js', min: false) %>
-<%# javascript_include_tag "https://maps.googleapis.com/maps/api/js?v=3&key=#{'AIzaSyAkxoq994ig2YOVCLuBpuMXPePG13fvSqc'}" %>
-
 <%= stylesheet_link_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload' %>
 <%= javascript_include_tag 'admin', 'data-turbolinks-track': 'reload' %>
