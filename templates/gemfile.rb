@@ -75,7 +75,7 @@ gem 'mini_magick'
 gem 'sidekiq'
 
 # html模板
-gem 'simple_form', '~> 3.5.1'
+gem 'simple_form'
 gem 'cocoon'
 
 # es6
