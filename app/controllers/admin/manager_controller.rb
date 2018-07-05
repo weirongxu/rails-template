@@ -12,7 +12,7 @@ module Admin
     def create
       @current = model.new(model_params)
       if current.save
-        redirect_to action: :index
+        redirect_to url_for([:admin, *parent_models, model])
       else
         render :new
       end
@@ -30,7 +30,7 @@ module Admin
 
     def update
       if current.update(model_params)
-        redirect_to action: :index
+        redirect_to url_for([:admin, *parent_models, model])
       else
         render :edit
       end
@@ -68,7 +68,7 @@ module Admin
 
     helper_method :parent_models
     def parent_models(it=current)
-      self.class._parent_models.(it)
+      self.instance_exec(it, &self.class._parent_models)
     end
 
     # params
