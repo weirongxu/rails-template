@@ -18,6 +18,11 @@ module Admin
       end
     end
 
+    def show
+      edit
+      render :edit
+    end
+
     def edit
       add_breadcrumb "Edit #{breadcrumbs.last.name}"
       current
