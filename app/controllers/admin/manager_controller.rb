@@ -85,13 +85,15 @@ module Admin
     end
 
     # render
-    def render(*args)
-      if template_exists?("#{controller_path}/#{params[:action]}")
-        super(*args)
+    def render(*args, &block)
+      options = _normalize_render(*args, &block)
+      action = options.fetch(:action, params[:action])
+      if template_exists?("#{controller_path}/#{action}")
+        super(*args, &block)
       else
         super(*(args << {
-          template: "/admin/manager/#{params[:action]}",
-        }.merge(args.extract_options!)))
+          template: "/admin/manager/#{action}",
+        }.merge(args.extract_options!)), &block)
       end
     end
   end
