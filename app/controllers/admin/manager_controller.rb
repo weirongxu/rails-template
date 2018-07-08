@@ -12,10 +12,15 @@ module Admin
     def create
       @current = model.new(model_params)
       if current.save
-        redirect_to action: :index
+        redirect_to url_for([:admin, *parent_models, model])
       else
         render :new
       end
+    end
+
+    def show
+      edit
+      render :edit
     end
 
     def edit
@@ -25,7 +30,7 @@ module Admin
 
     def update
       if current.update(model_params)
-        redirect_to action: :index
+        redirect_to url_for([:admin, *parent_models, model])
       else
         render :edit
       end
@@ -63,7 +68,7 @@ module Admin
 
     helper_method :parent_models
     def parent_models(it=current)
-      self.class._parent_models.(it)
+      self.instance_exec(it, &self.class._parent_models)
     end
 
     # params
@@ -85,13 +90,15 @@ module Admin
     end
 
     # render
-    def render(*args)
-      if template_exists?("#{controller_path}/#{params[:action]}")
-        super(*args)
+    def render(*args, &block)
+      options = _normalize_render(*args, &block)
+      action = options.fetch(:action, params[:action])
+      if template_exists?("#{controller_path}/#{action}")
+        super(*args, &block)
       else
         super(*(args << {
-          template: "/admin/manager/#{params[:action]}",
-        }.merge(args.extract_options!)))
+          template: "/admin/manager/#{action}",
+        }.merge(args.extract_options!)), &block)
       end
     end
   end
