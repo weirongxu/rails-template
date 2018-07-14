@@ -88,15 +88,17 @@ module PowerCtrl
 
       case
       when self.is_a?(ActionController::Base)
-        format.html {
-          redirect_back alert: err
-        }
-        format.json {
-          render json: {
-            status: 'error',
-            message: err
-          }, status: 400
-        }
+        respond_to do |format|
+          format.html {
+            redirect_back alert: err
+          }
+          format.json {
+            render json: {
+              status: 'error',
+              message: err
+            }, status: 400
+          }
+        end
       when self.is_a?(ActionController::API)
         render json: {
           status: 'error',

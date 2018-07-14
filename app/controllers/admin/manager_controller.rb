@@ -1,16 +1,16 @@
 module Admin
   class ManagerController < AdminController
     def index
-      @list = page model
+      @list = page model_query
     end
 
     def new
       add_breadcrumb "Add #{breadcrumbs.last.name}"
-      @current = model.new
+      @current = model_query.new
     end
 
     def create
-      @current = model.new(model_params)
+      @current = model_query.new(model_params)
       if current.save
         redirect_to url_for([:admin, *parent_models, model])
       else
@@ -56,6 +56,11 @@ module Admin
       self.class._model
     end
 
+    helper_method :model_query
+    def model_query
+      self.class._model
+    end
+
     def self.parent_models(&block)
       @_parent_models = block
     end
@@ -86,7 +91,7 @@ module Admin
 
     helper_method :current
     def current
-      @current ||= model.find(params[:id])
+      @current ||= model_query.find(params[:id])
     end
 
     # render
