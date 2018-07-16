@@ -20,6 +20,22 @@ module PowerAble
       end
     end
 
+    def self.belongs_array_to(column, class_name: column.classify, nil_ignore: true)
+      self.define_method(column) do
+        ids = self.send("#{column}_id") || []
+        id_models = Object.const_get(class_name).where(id: ids).index_by(&:id)
+        ids.map do |id|
+          id_models[id]
+        end.yield_self do |models|
+          if nil_ignore
+            models.compact
+          else
+            models
+          end
+        end
+      end
+    end
+
     def self.date_or_range2where(column, datetime)
       if datetime.is_a? Range
         conds = []

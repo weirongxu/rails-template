@@ -2,7 +2,7 @@
 
 <%
 def cdn_url(url, min: true)
-  if (min && Rails.env.production?)
+  if (min and Rails.env.production?)
     url.sub(/\.(js|css)/, '.min\1')
   else
     url
