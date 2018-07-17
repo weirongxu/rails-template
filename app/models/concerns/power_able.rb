@@ -36,17 +36,25 @@ module PowerAble
       end
     end
 
-    def self.date_or_range2where(column, datetime)
-      if datetime.is_a? Range
+    def self.date_or_range_to_where(column, datetime)
+      def is_datetime(obj)
+        [Date, Time, DateTime].any? {|type| obj.is_a?(type)}
+      end
+      if datetime.is_a?(Range)
         conds = []
-        if not datetime.first.try(:infinite?)
-          conds.push("#{column} >= '#{datetime.first.to_s(:db)}'")
-        elsif not datetime.last.try(:infinite?)
-          if exclude_end?
-            conds.push("#{column} < '#{datetime.last.to_s(:db)}'")
+        if is_datetime(datetime)
+          conds.push("#{column} >= '#{datetime.first.to_s}'")
+        elsif not datetime.first.try(:infinite?)
+          raise Error("Range first type(#{datetime.first.class.name}) must datetime or Infinite")
+        end
+        if datetime.is_a?(Range)
+          if datetime.exclude_end?
+            conds.push("#{column} < '#{datetime.last.to_s}'")
           else
-            conds.push("#{column} <= '#{datetime.last.to_s(:db)}'")
+            conds.push("#{column} <= '#{datetime.last.to_s}'")
           end
+        elsif not datetime.last.try(:infinite?)
+          raise Error("Range last type(#{datetime.first.class.name}) must datetime or Infinite")
         end
         sql = conds.join(' AND ')
         if sql.empty?
@@ -54,8 +62,10 @@ module PowerAble
         else
           sql
         end
+      elsif is_datetime(datetime)
+        "#{column} = '#{datetime.to_s}'"
       else
-        "#{column} = '#{datetime.to_s(:db)}'"
+        raise Error("datetime type(#{datetime.class.name}) must Datetime or Range")
       end
     end
   end
