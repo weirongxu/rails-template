@@ -5,7 +5,13 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <%= render_if(partial: "#{controller_path}/table/headers") %>
+          <%= render_if(partial: "#{controller_path}/table/headers") do %>
+            <% table_fields.each do |field, _| %>
+              <th>
+                <%= model.human_attribute_name field %>
+              </th>
+            <% end %>
+          <% end %>
           <th></th>
         </tr>
       </thead>
@@ -14,7 +20,13 @@
           <% @list.each do |it| %>
             <%= render_if(partial: "#{controller_path}/table/tr", locals: {it: it}) do %>
               <tr>
-                <%= render_if(partial: "#{controller_path}/table/columns", locals: {it: it}) %>
+                <%= render_if(partial: "#{controller_path}/table/columns", locals: {it: it}) do %>
+                  <% table_fields.each do |field, field_fn| %>
+                    <td>
+                      <%= self.instance_exec(it, &field_fn) %>
+                    </td>
+                  <% end %>
+                <% end %>
                 <td>
                   <%= render_if(partial: "#{controller_path}/table/operations", locals: {it: it}) do %>
                     <%= link_operations(it) %>

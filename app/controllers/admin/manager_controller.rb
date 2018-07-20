@@ -89,6 +89,39 @@ module Admin
       @model_params ||= params.require(model.name.underscore.to_sym).permit(*self.class._model_params)
     end
 
+    def self.table_fields(*table_fields)
+      @_table_fields = table_fields.map do |field|
+        if not field.is_a?(Array)
+          field = field.to_s
+          if field.to_s.include?('.')
+            (field, attr) = field.split(/&?\./, 2)
+            [field, -> (it) {
+              binding.eval("it.#{field}&.#{attr}")
+            }]
+          else
+            [field, -> (it) {
+              it.send(field)
+            }]
+          end
+        elsif [String, Symbol].any? {|type| field[1].is_a?(type)}
+          [field[0], -> (it) {
+            it.send(field[1])
+          }]
+        else
+          field
+        end
+      end
+    end
+
+    def self._table_fields
+      @_table_fields
+    end
+
+    helper_method :table_fields
+    def table_fields
+      self.class._table_fields
+    end
+
     helper_method :current
     def current
       @current ||= model_query.find(params[:id])
