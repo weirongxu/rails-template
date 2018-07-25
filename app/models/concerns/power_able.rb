@@ -20,7 +20,7 @@ module PowerAble
       end
     end
 
-    def self.belongs_array_to(column, class_name: column.classify, nil_ignore: true)
+    def self.belongs_array_to(column, class_name: column.to_s.singularize.classify, nil_ignore: true)
       self.define_method(column) do
         ids = self.send("#{column}_id") || []
         id_models = Object.const_get(class_name).where(id: ids).index_by(&:id)
