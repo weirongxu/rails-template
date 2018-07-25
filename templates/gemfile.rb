@@ -18,7 +18,8 @@ group :development do
   gem 'annotate'
 
   # 增强rails console
-  # gem 'pry-rails'
+  gem 'pry-rails'
+  gem 'awesome_print'
 
   # 生成对象关系模型图
   gem 'railroady'
