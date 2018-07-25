@@ -23,7 +23,7 @@ def startup_template!
 end
 
 def apply_template!
-  copy_file "Capfile"
+  copy_file ".pryrc"
 
   generate("annotate:install")
   generate("simple_form:install --bootstrap")
@@ -33,6 +33,7 @@ def apply_template!
   apply "templates/rspec.rb"
   apply "templates/devise.rb" # after rspec
   apply "templates/omniauth.rb" # after devise
+  copy_file "Capfile"
   apply "templates/capistrano.rb"
   apply "templates/app.rb"
   apply "templates/config.rb"
