@@ -1,7 +1,7 @@
 module HaltCtrl
   extend ActiveSupport::Concern
 
-  class Halt < StandardError; end
+  class Halt < Exception; end
 
   included do
     rescue_from(Halt) do |err|
