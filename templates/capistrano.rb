@@ -10,6 +10,16 @@ generate("capistrano:nginx_puma:config")
     end
   end || '8.11.1'
 
+append_to_file('config/deploy.rb') do
+<<-EOF
+
+append :linked_files, ".env"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "storage"
+set :logrotate_logs_keep, -> { 60 }
+set :logrotate_interval, -> { 'daily' }
+EOF
+end
+
 append_to_file('config/deploy/production.rb') do
 <<-EOF
 

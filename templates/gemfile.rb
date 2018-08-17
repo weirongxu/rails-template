@@ -26,13 +26,17 @@ group :development do
 
   # 漏洞检测
   gem 'brakeman', require: false
+  gem 'bundler-audit'
 
   # 自动部署
   gem 'capistrano'
   gem 'capistrano-rvm', require: false
   gem 'capistrano-rails', require: false
+  gem 'capistrano-rails-console', require: false
   gem 'capistrano3-puma', require: false
   gem 'capistrano-sidekiq', require: false
+  gem 'capistrano-logrotate', require: false
+  gem 'sshkit-sudo', require: false
 end
 
 group :development, :test do
