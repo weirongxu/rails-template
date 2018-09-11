@@ -83,11 +83,18 @@ module PowerCtrl
       end
     end
 
+    def self.render_error_by(type)
+      @@_render_error_by = type.to_sym
+    end
+
+    def self._render_error_by
+      @@_render_error_by
+    end
+
     rescue_from(ActiveRecord::ActiveRecordError) do |err|
       raise err if not err.respond_to? :record
 
-      case
-      when self.is_a?(ActionController::Base)
+      render_html = -> () {
         respond_to do |format|
           format.html {
             redirect_back alert: err
@@ -99,11 +106,26 @@ module PowerCtrl
             }, status: 400
           }
         end
-      when self.is_a?(ActionController::API)
+      }
+
+      render_json = -> () {
         render json: {
           status: 'error',
           message: err
         }, status: 400
+      }
+
+      _render_error_by = self.class._render_error_by
+
+      case
+      when _render_error_by == :html
+        render_html.call
+      when _render_error_by == :json
+        render_json.call
+      when self.is_a?(ActionController::Base)
+        render_html.call
+      when self.is_a?(ActionController::API)
+        render_json.call
       end
     end
   end
