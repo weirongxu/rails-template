@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'class extends' do
+describe 'class extends', type: :feature do
   it 'config attribute' do
     class Base
       class_config_attribute :config, {base: 'base'}
