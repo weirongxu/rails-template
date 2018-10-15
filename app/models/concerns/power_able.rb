@@ -4,6 +4,18 @@ module PowerAble
   included do
     extend Enumerize
 
+    def self.transaction_prod(*args, &block)
+      if Rails.env.test?
+        block.call
+      else
+        self.transaction(*args, &block)
+      end
+    end
+
+    def transaction_prod(*args, &block)
+      self.class.transaction_prod(*args, &block)
+    end
+
     def self.enumerize(column, options={})
       super(column, {
         predicates: { prefix: true },
@@ -20,7 +32,7 @@ module PowerAble
       end
     end
 
-    def self.belongs_array_to(column, class_name: column.to_s.singularize.classify, nil_ignore: true)
+    def self.belongs_array_to(column, class_name: column.to_s.singularize.classify, nil_ignore: true, **args)
       self.define_method(column) do
         ids = self.send("#{column}_id") || []
         id_models = Object.const_get(class_name).where(id: ids).index_by(&:id)
@@ -34,27 +46,23 @@ module PowerAble
           end
         end
       end
+
+      self.define_method("#{column}=") do |relateds|
+        self.send("#{column}_id=", relateds.map(&:id))
+      end
     end
 
-    def self.date_or_range_to_where(column, datetime)
-      is_datetime = ->(obj) {
-        [Date, Time, DateTime].any? {|type| obj.is_a?(type)}
-      }
-      if datetime.is_a?(Range)
+    def self.date_or_range2where(column, datetime)
+      if datetime.is_a? Range
         conds = []
-        if is_datetime.call(datetime.first)
-          conds.push("#{column} >= '#{datetime.first.to_s}'")
-        elsif not datetime.first.try(:infinite?)
-          raise Exception.new("Range first type(#{datetime.first.class.name}) must datetime or Infinite")
-        end
-        if is_datetime.call(datetime.last)
-          if datetime.exclude_end?
-            conds.push("#{column} < '#{datetime.last.to_s}'")
-          else
-            conds.push("#{column} <= '#{datetime.last.to_s}'")
-          end
+        if not datetime.first.try(:infinite?)
+          conds.push("#{column} >= '#{datetime.first.to_s(:db)}'")
         elsif not datetime.last.try(:infinite?)
-          raise Exception.new("Range last type(#{datetime.first.class.name}) must datetime or Infinite")
+          if exclude_end?
+            conds.push("#{column} < '#{datetime.last.to_s(:db)}'")
+          else
+            conds.push("#{column} <= '#{datetime.last.to_s(:db)}'")
+          end
         end
         sql = conds.join(' AND ')
         if sql.empty?
@@ -62,19 +70,21 @@ module PowerAble
         else
           sql
         end
-      elsif is_datetime.call(datetime)
-        "#{column} = '#{datetime.to_s}'"
       else
-        raise Exception.new("datetime type(#{datetime.class.name}) must Datetime or Range")
+        "#{column} = '#{datetime.to_s(:db)}'"
       end
     end
-  end
 
-  def serializer(options={})
-    ActiveModelSerializers::SerializableResource.new(self, options).as_json
-  end
+    def serializer(options={})
+      ActiveModelSerializers::SerializableResource.new(self, options).as_json
+    end
 
-  def raise_self(error=nil)
-    raise(ActiveRecord::RecordNotSaved.new(error || errors.full_messages.first || "Failed to save the record", self))
+    def self.raise_self!(error=nil)
+      raise(ActiveRecord::RecordNotSaved.new(error || "Failed to save the record", self.new))
+    end
+
+    def raise_self!(error=nil)
+      raise(ActiveRecord::RecordNotSaved.new(error || errors.full_messages.first || "Failed to save the record", self))
+    end
   end
 end
