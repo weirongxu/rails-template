@@ -19,7 +19,7 @@ module PowerAble
     def self.enumerize(column, options={})
       super(column, {
         predicates: { prefix: true },
-        scope: true
+        scope: (not options.fetch(:multiple, false)),
       }.merge(options))
     end
 
