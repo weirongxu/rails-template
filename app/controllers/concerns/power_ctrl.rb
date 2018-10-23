@@ -66,6 +66,10 @@ module PowerCtrl
       paramsify(request.POST)
     end
 
+    def params_path
+      paramsify(request.path_parameters)
+    end
+
     helper_method :render_if
     def render_if(options)
       if options.is_a? String
