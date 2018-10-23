@@ -46,7 +46,7 @@ class TestsController < ApplicationController
 
   class TestDelayJob < ApplicationJob
     def perform(started_at)
-      ApplicationMailer.send_email(to: TEST_EMAIL, subject: "TestDelayJob run success (started at #{started_at}, sended at #{Time.now})").deliver_later
+      ApplicationMailer.send_email(to: TEST_EMAIL, subject: "TestDelayJob run success (started at #{started_at}, sent at #{Time.now})").deliver_later
     end
   end
 
