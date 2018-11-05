@@ -23,12 +23,21 @@ module PowerAble
       }.merge(options))
     end
 
-    def self.has_and_belongs_to_many_uniq(*args)
-      self.has_and_belongs_to_many(*args) do
+    def self.has_and_belongs_to_many_uniq(field, *args)
+      self.has_and_belongs_to_many(field, *args) do
         def <<(group)
-          group -= self if group.respond_to?(:to_a)
-          super group unless include?(group)
+          super(group) if not include?(group)
         end
+      end
+
+      self.define_singleton_method(:"#{field}=") do |groups|
+        groups -= self.send(field)
+        super(groups)
+      end
+
+      self.define_singleton_method(:"#{field.singularize}_ids=") do |group_ids|
+        group_ids -= self.send(group_ids)
+        super(group_ids)
       end
     end
 
