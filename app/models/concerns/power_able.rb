@@ -30,13 +30,13 @@ module PowerAble
         end
       end
 
-      self.define_singleton_method(:"#{field}=") do |groups|
+      self.define_method(:"#{field}=") do |groups|
         groups -= self.send(field)
         super(groups)
       end
 
-      self.define_singleton_method(:"#{field.to_s.singularize}_ids=") do |group_ids|
-        group_ids -= self.send(group_ids)
+      self.define_method(:"#{field.to_s.singularize}_ids=") do |group_ids|
+        group_ids -= self.send(:"#{field.to_s.singularize}_ids")
         super(group_ids)
       end
     end
