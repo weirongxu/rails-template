@@ -35,7 +35,7 @@ module PowerAble
         super(groups)
       end
 
-      self.define_singleton_method(:"#{field.singularize}_ids=") do |group_ids|
+      self.define_singleton_method(:"#{field.to_s.singularize}_ids=") do |group_ids|
         group_ids -= self.send(group_ids)
         super(group_ids)
       end
