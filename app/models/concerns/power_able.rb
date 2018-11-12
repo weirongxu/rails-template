@@ -41,23 +41,35 @@ module PowerAble
       end
     end
 
-    def self.belongs_array_to(column, class_name: column.to_s.singularize.classify, nil_ignore: true, **args)
-      self.define_method(column) do
-        ids = self.send("#{column}_id") || []
-        id_models = Object.const_get(class_name).where(id: ids).index_by(&:id)
-        ids.map do |id|
-          id_models[id]
-        end.yield_self do |models|
-          if nil_ignore
-            models.compact
-          else
-            models
-          end
-        end
-      end
+    def self.belongs_array_to(
+      name,
+      class_name: name.to_s.singularize.classify,
+      foreign_key: "#{name}_id",
+      primary_key: :id,
+      dependent: nil,
+      nil_ignore: true
+    )
+      primary_key = primary_key.to_sym
 
-      self.define_method("#{column}=") do |relateds|
-        self.send("#{column}_id=", relateds.map(&:id))
+      class_eval <<-CODE, __FILE__, __LINE__ + 1
+        def #{name}
+          ids = self.#{foreign_key} || []
+          id_models = Object.const_get('#{class_name}').where(#{primary_key}: ids).index_by(&:#{primary_key})
+          models = ids.map do |id|
+            id_models[id]
+          end
+          #{'models = models.compact' if nil_ignore}
+          models
+        end
+
+
+        def #{name}=(relateds)
+          self.#{foreign_key} = relateds.map(&:#{primary_key})
+        end
+      CODE
+
+      if dependent == :destroy
+        after_destroy_commit { public_send(name)&.each(&:destroy) }
       end
     end
 
