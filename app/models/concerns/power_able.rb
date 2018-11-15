@@ -82,7 +82,7 @@ module PowerAble
         if is_datetime.call(datetime.first)
           conds.push("#{column} >= '#{datetime.first.to_s}'")
         elsif not datetime.first.try(:infinite?)
-          raise Exception.new("Range first type(#{datetime.first.class.name}) must datetime or Infinite")
+          raise "Range first type(#{datetime.first.class.name}) must datetime or Infinite"
         end
         if is_datetime.call(datetime.last)
           if datetime.exclude_end?
@@ -91,7 +91,7 @@ module PowerAble
             conds.push("#{column} <= '#{datetime.last.to_s}'")
           end
         elsif not datetime.last.try(:infinite?)
-          raise Exception.new("Range last type(#{datetime.first.class.name}) must datetime or Infinite")
+          raise "Range last type(#{datetime.first.class.name}) must datetime or Infinite"
         end
         sql = conds.join(' AND ')
         if sql.empty?
@@ -102,7 +102,7 @@ module PowerAble
       elsif is_datetime.call(datetime)
         "#{column} = '#{datetime.to_s}'"
       else
-        raise Exception.new("datetime type(#{datetime.class.name}) must Datetime or Range")
+        raise "datetime type(#{datetime.class.name}) must Datetime or Range"
       end
     end
 
