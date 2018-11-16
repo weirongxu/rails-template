@@ -14,27 +14,52 @@ class Class
   #  Application._config
   #  # {default_value: 123}
   #
+  #  Application.new.config
+  #  # {default_value: 123}
+  #
   #  App._config
   #  # {default_value: 123, a: 'a'}
   #
+  #  App.new.config
+  #  # {default_value: 123, a: 'a'}
+  #
   def class_config_attribute(attr, default={})
-    pri_attr_get = "_#{attr}".to_sym
-    pri_attr_put = "_#{attr}=".to_sym
-    class_attribute pri_attr_get
-    send(pri_attr_put, default)
+    attr = attr.to_sym
+    inner_attr_get = "_#{attr}".to_sym
+    inner_attr_put = "_#{attr}=".to_sym
+    class_attribute inner_attr_get
+    send(inner_attr_put, default)
 
-    define_singleton_method(attr.to_sym) do |config|
-      source = send(pri_attr_get)
+    define_singleton_method(attr) do |config|
+      source = send(inner_attr_get)
       if source.is_a?(Hash) && config.is_a?(Hash)
-        send(pri_attr_put, source.merge(config))
+        send(inner_attr_put, source.deep_merge(config))
       else
-        send(pri_attr_put, config)
+        send(inner_attr_put, config)
       end
     end
 
     class_eval do
-      define_method(attr.to_sym) do
-        self.class.send(pri_attr_get)
+      define_method(attr) do
+        run_proc = -> (value, parent: nil) {
+          if value.is_a? Proc
+            value.call(self, parent)
+          elsif value.is_a? Hash
+            value.transform_values do |it|
+              run_proc.call(it, parent: value)
+            end
+          elsif value.is_a? Array
+            value.map do |it|
+              run_proc.call(it, parent: value)
+            end
+          else
+            value
+          end
+        }
+
+        val = instance_variable_get(:"@#{attr}")
+        return val if val
+        instance_variable_set(:"@#{attr}", run_proc.call(self.class.send(inner_attr_get)))
       end
     end
 

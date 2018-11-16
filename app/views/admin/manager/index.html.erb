@@ -1,4 +1,8 @@
-<%= link_btn 'New', {action: :new, controller: controller_path}, type: 'primary' %>
+<div>
+  <%= link_btn 'New', {action: :new, controller: controller_path}, type: 'primary' %>
+</div>
+
+<%= render_if(partial: "#{controller_path}/table/prepend_table") %>
 
 <div class="table-responsive">
   <%= render_if(partial: "#{controller_path}/table/table") do %>
@@ -23,10 +27,21 @@
                 <%= render_if(partial: "#{controller_path}/table/columns", locals: {it: it}) do %>
                   <% table_fields.each do |field, field_fn| %>
                     <td>
-                      <%= self.instance_exec(it, &field_fn) %>
+                      <%=
+                        begin
+                          cont = self.instance_exec(it, &field_fn)
+                          case cont
+                          when TrueClass, FalseClass
+                            cont ? 'yes' : 'no'
+                          else
+                            cont
+                          end
+                        end
+                      %>
                     </td>
                   <% end %>
                 <% end %>
+                <%= render_if(partial: "#{controller_path}/table/append_columns", locals: {it: it}) %>
                 <td>
                   <%= render_if(partial: "#{controller_path}/table/operations", locals: {it: it}) do %>
                     <%= link_operations(it) %>
@@ -40,3 +55,7 @@
     </table>
   <% end %>
 </div>
+
+<%= paginate @list %>
+
+<%= render_if(partial: "#{controller_path}/table/append_body") %>

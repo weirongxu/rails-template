@@ -1,29 +1,18 @@
 <%= csrf_meta_tags %>
 
-<%
-def cdn_url(url, min: true)
-  if (min and Rails.env.production?)
-    url.sub(/\.(js|css)/, '.min\1')
-  else
-    url
-  end
-end
-
-def cdn_css(url, options={})
-  stylesheet_link_tag(cdn_url(url, options))
-end
-
-def cdn_js(url, options={})
-  javascript_include_tag(cdn_url(url, options))
-end
-%>
-
 <!-- jquery -->
 <%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js') %>
 
 <!-- bootstrap -->
 <%= cdn_css('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css') %>
 <%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js') %>
+
+<!-- moment -->
+<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js') %>
+
+<!-- datetimepicker -->
+<%= cdn_css('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css') %>
+<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js', min: false) %>
 
 <!-- font-awesome -->
 <%= cdn_css('//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css') %>
@@ -35,11 +24,23 @@ end
 
 <%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js') %>
 
+<!-- cropper -->
+<%= cdn_css('//cdn.bootcss.com/cropper/2.3.3/cropper.css') %>
+<%= cdn_js('//cdn.bootcss.com/cropper/2.3.3/cropper.js') %>
+
 <!-- eventemitter -->
 <%= cdn_js('//cdn.bootcss.com/eventemitter3/1.2.0/index.js') %>
 
 <!-- vue -->
 <%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/vue/2.5.11/vue.js') %>
+
+<!-- select2 -->
+<%= cdn_css('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css') %>
+<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.js') %>
+<%= cdn_js('//cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/i18n/zh-CN.js', min: false) %>
+
+<!-- baidu map -->
+<%= cdn_js('http://api.map.baidu.com/api?v=3.0&ak=CzbewVboSe2a8gdFwnbywGfeiRQtieEN', min: false) %>
 
 <%= stylesheet_link_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload' %>
 <%= javascript_include_tag 'admin', 'data-turbolinks-track': 'reload' %>
