@@ -92,7 +92,7 @@ module PowerCtrl
     end
 
     def self._render_error_by
-      @@_render_error_by
+      @@_render_error_by ||= nil
     end
 
     rescue_from(ActiveRecord::ActiveRecordError) do |err|
