@@ -88,11 +88,15 @@ module PowerCtrl
     end
 
     def self.render_error_by(type)
-      @@_render_error_by = type.to_sym
+      self.class_variable_set(:@@_render_error_by, type)
     end
 
     def self._render_error_by
-      @@_render_error_by
+      if self.class_variable_defined?(:@@_render_error_by)
+        self.class_variable_get(:@@_render_error_by)
+      else
+        nil
+      end
     end
 
     rescue_from(ActiveRecord::ActiveRecordError) do |err|
