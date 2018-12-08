@@ -31,12 +31,12 @@ module PowerAble
       end
 
       self.define_method(:"#{field}=") do |groups|
-        groups -= self.send(field)
+        groups -= self.public_send(field)
         super(groups)
       end
 
       self.define_method(:"#{field.to_s.singularize}_ids=") do |group_ids|
-        group_ids -= self.send(:"#{field.to_s.singularize}_ids")
+        group_ids -= self.public_send(:"#{field.to_s.singularize}_ids")
         super(group_ids)
       end
     end
@@ -54,14 +54,8 @@ module PowerAble
       class_eval <<-CODE, __FILE__, __LINE__ + 1
         def #{name}
           ids = self.#{foreign_key} || []
-          id_models = Object.const_get('#{class_name}').where(#{primary_key}: ids).index_by(&:#{primary_key})
-          models = ids.map do |id|
-            id_models[id]
-          end
-          #{'models = models.compact' if nil_ignore}
-          models
+          Object.const_get('#{class_name}').where(#{primary_key}: ids)
         end
-
 
         def #{name}=(relateds)
           self.#{foreign_key} = relateds.map(&:#{primary_key})
