@@ -90,27 +90,45 @@ module Admin
     end
 
     def self.table_fields(*table_fields)
-      @_table_fields = table_fields.map do |field|
-        if not field.is_a?(Array)
-          field = field.to_s
-          if field.to_s.include?('.')
-            (field, attr) = field.split(/&?\./, 2)
-            [field, -> (it) {
-              binding.eval("it.#{field}&.#{attr}")
-            }]
-          else
-            [field, -> (it) {
-              it.send(field)
-            }]
-          end
-        elsif [String, Symbol].any? {|type| field[1].is_a?(type)}
-          [field[0], -> (it) {
-            it.send(field[1])
-          }]
+      to_fn = -> (field) {
+        if field.is_a? Symbol
+          -> (it) {
+            is_value = it.is_a?(ApplicationRecord)
+            field = field.to_s
+            if field.include?('.')
+              fields = field.split(/&?\./)
+              if is_value
+                binding.eval("it.#{fields.join('&.')}")
+              else
+                *reflections, attr = fields
+                binding.eval("it.#{reflections.map{|f| "reflections['#{f}'].klass"}.join('.')}")
+                  .human_attribute_name(attr)
+              end
+            else
+              if is_value
+                it.send(field)
+              else
+                it.human_attribute_name(field)
+              end
+            end
+          }
+        elsif field.is_a? String
+          -> (it) {
+            field
+          }
         else
           field
         end
-      end
+      }
+      @_table_fields = table_fields.map do |field|
+        if field.is_a?(Symbol)
+          [to_fn.call(field), to_fn.call(field)]
+        elsif field.is_a?(Array)
+          [to_fn.call(field[0]), to_fn.call(field[1])]
+        else
+          nil
+        end
+      end.compact
     end
 
     def self._table_fields
