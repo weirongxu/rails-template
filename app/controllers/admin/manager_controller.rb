@@ -145,6 +145,33 @@ module Admin
       @current ||= model_query.find(params[:id])
     end
 
+    # switch
+    def self.new_able(val)
+      @_new_able = val
+    end
+
+    def self._new_able
+      @_new_able != false
+    end
+
+    helper_method :new_able?
+    def new_able?
+      self.class._new_able
+    end
+
+    def self.operations_able(val)
+      @_operations_able = val
+    end
+
+    def self._operations_able
+      @_operations_able != false
+    end
+
+    helper_method :operations_able?
+    def operations_able?
+      self.class._operations_able
+    end
+
     # render
     def render(*args, &block)
       options = _normalize_render(*args, &block)
